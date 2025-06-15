@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      PG_USER: ${PG_USER}
+      PG_PASSWORD: ${PG_PASSWORD}
+      PG_HOST: ${PG_HOST}
+      PG_DATABASE: ${PG_DATABASE}
+      PG_PORT: ${PG_PORT}
+      SMARTICO_API_TOKEN: ${SMARTICO_API_TOKEN}
+      SMARTICO_API_URL: ${SMARTICO_API_URL}
+      PORT: ${PORT}
+      NODE_ENV: ${NODE_ENV}
+    restart: unless-stopped
