@@ -1,5 +1,5 @@
 import { getAllPreferencias, JogadorPreferencia } from '../repositories/jogadorRepository';
-import { atualizarJogador } from './smarticoService';
+import { atualizarJogadorLote } from './smarticoService';
 import logger from '../config/logger';
 
 interface ResultadoAtualizacao {
@@ -8,17 +8,25 @@ interface ResultadoAtualizacao {
 
 export async function sincronizarPreferencias(): Promise<ResultadoAtualizacao> {
   const jogadores: JogadorPreferencia[] = await getAllPreferencias();
+  const lotes = [];
 
-for (let i = 0; i < jogadores.length; i++) {
-    const jogador = jogadores[i];
+  while (jogadores.length) {
+    lotes.push(jogadores.splice(0, 200));
+  }
+
+  for (let i = 0; i < lotes.length; i++) {
+    const jogadoresLote = lotes[i];
     try {
-      await atualizarJogador(jogador);
+      await atualizarJogadorLote(jogadoresLote);
       
-    } catch (e: any) {
-      throw new Error(`Erro ao atualizar jogador ${jogador.jogador_codigo}: ${e?.message}`);
+      logger.info('Lote %d atualizado com sucesso', i + 1);
+    } catch (error) {
+      logger.error('Erro ao atualizar o lote %d: %o', i + 1, error);
     }
   }
 
-  logger.info('Sincronização concluída. Total jogadores processados: %d', jogadores.length);
-  return {message: 'success'};
+  logger.info('Sincronização concluída. Total de jogadores processados: %d', jogadores.length);
+  return { message: 'success' };
 }
+
+
