@@ -20,3 +20,8 @@ export async function getAllPreferencias(): Promise<JogadorPreferencia[]> {
   const { rows } = await pool.query<JogadorPreferencia>('SELECT * FROM mv_jogadores_preferencias;');
   return rows;
 }
+
+export async function updateViewPreferencies(): Promise<any> {
+  const { rows } = await pool.query<JogadorPreferencia>('REFRESH MATERIALIZED VIEW mv_jogadores_preferencias;');
+  return rows;
+}

@@ -1,4 +1,4 @@
-import { getAllPreferencias, JogadorPreferencia } from '../repositories/jogadorRepository';
+import { getAllPreferencias, JogadorPreferencia, updateViewPreferencies } from '../repositories/jogadorRepository';
 import { atualizarJogadorLote } from './smarticoService';
 import logger from '../config/logger';
 
@@ -26,6 +26,19 @@ export async function sincronizarPreferencias(): Promise<ResultadoAtualizacao> {
   }
 
   logger.info('Sincronização concluída. Total de jogadores processados: %d', jogadores.length);
+  return { message: 'success' };
+}
+
+export async function atualizarView(): Promise<ResultadoAtualizacao> {
+  try {
+    const result = await updateViewPreferencies();
+    
+    logger.info('View atualizada com sucesso', result);
+  } catch (error) {
+    logger.error('Erro ao atualizar a view', error);
+  }
+
+  logger.info('Atualização concluída.');
   return { message: 'success' };
 }
 
