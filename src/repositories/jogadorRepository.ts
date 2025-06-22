@@ -16,12 +16,27 @@ export interface JogadorPreferencia {
   top_spin_provider: string | null;
 }
 
+export interface NiveisFraude {
+  codigo: number;
+  nivel: number;
+}
+
 export async function getAllPreferencias(): Promise<JogadorPreferencia[]> {
   const { rows } = await pool.query<JogadorPreferencia>('SELECT * FROM mv_jogadores_preferencias;');
   return rows;
 }
 
+export async function getAllNiveisFraude(): Promise<NiveisFraude[]> {
+  const { rows } = await pool.query<NiveisFraude>('SELECT codigo, nivel FROM mv_jogadores_niveis limit 200;');
+  return rows;
+}
+
 export async function updateViewPreferencies(): Promise<any> {
   const { rows } = await pool.query<JogadorPreferencia>('REFRESH MATERIALIZED VIEW mv_jogadores_preferencias;');
+  return rows;
+}
+
+export async function updateViewNiveisFraude(): Promise<any> {
+  const { rows } = await pool.query<JogadorPreferencia>('REFRESH MATERIALIZED VIEW mv_jogadores_niveis;');
   return rows;
 }
