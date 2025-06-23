@@ -11,10 +11,10 @@ export async function sincronizarPreferencias(): Promise<ResultadoAtualizacao> {
   const lotes = [];
 
   while (jogadores.length) {
-    lotes.push(jogadores.splice(0, 600));
+    lotes.push(jogadores.splice(0, 400));
   }
 
-  logger.info('Total de jogadores a serem processados: ', jogadores.length);
+  logger.info('Total de jogadores a serem processados: %d', jogadores.length);
 
   for (let i = 0; i < lotes.length; i++) {
     const jogadoresLote = lotes[i];
@@ -49,14 +49,14 @@ export async function sincronizarNiveisFraude(): Promise<ResultadoAtualizacao> {
   const lotes = [];
 
   while (niveisFraude.length) {
-    lotes.push(niveisFraude.splice(0, 600));
+    lotes.push(niveisFraude.splice(0, 400));
   }
 
-  logger.info('Total de jogadores a serem processados: ', niveisFraude.length);
+  logger.info('Total de jogadores a serem processados: %d', niveisFraude.length);
 
   for (let i = 0; i < lotes.length; i++) {
     const jogadoresLote = lotes[i];
-    
+
     try {
       await atualizarNiveisFraudeLote(jogadoresLote);
       
