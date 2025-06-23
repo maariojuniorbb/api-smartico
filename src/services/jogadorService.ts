@@ -14,8 +14,6 @@ export async function sincronizarPreferencias(): Promise<ResultadoAtualizacao> {
     lotes.push(jogadores.splice(0, 400));
   }
 
-  logger.info('Total de jogadores a serem processados: %d', jogadores.length);
-
   for (let i = 0; i < lotes.length; i++) {
     const jogadoresLote = lotes[i];
     try {
@@ -33,9 +31,11 @@ export async function sincronizarPreferencias(): Promise<ResultadoAtualizacao> {
 
 export async function atualizarViewPreferencias(): Promise<ResultadoAtualizacao> {
   try {
-    const result = await updateViewPreferencies();
+    logger.info('Iniciando atualização da view de preferências');
+
+    await updateViewPreferencies();
     
-    logger.info('View preferências atualizada com sucesso', result);
+    logger.info('View preferências atualizada com sucesso');
   } catch (error) {
     logger.error('Erro ao atualizar a view de preferências', error);
   }
@@ -46,13 +46,12 @@ export async function atualizarViewPreferencias(): Promise<ResultadoAtualizacao>
 
 export async function sincronizarNiveisFraude(): Promise<ResultadoAtualizacao> {
   const niveisFraude: NiveisFraude[] = await getAllNiveisFraude();
+
   const lotes = [];
 
   while (niveisFraude.length) {
     lotes.push(niveisFraude.splice(0, 400));
   }
-
-  logger.info('Total de jogadores a serem processados: %d', niveisFraude.length);
 
   for (let i = 0; i < lotes.length; i++) {
     const jogadoresLote = lotes[i];
@@ -72,9 +71,11 @@ export async function sincronizarNiveisFraude(): Promise<ResultadoAtualizacao> {
 
 export async function atualizarViewNiveisFraude(): Promise<ResultadoAtualizacao> {
   try {
-    const result = await updateViewNiveisFraude();
+    logger.info('Iniciando atualização da view de níveis de fraude');
+
+    await updateViewNiveisFraude();
     
-    logger.info('View níveis de fraude atualizada com sucesso', result);
+    logger.info('View níveis de fraude atualizada com sucesso');
   } catch (error) {
     logger.error('Erro ao atualizar a view de níveis de fraude', error);
   }
