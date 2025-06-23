@@ -27,7 +27,7 @@ export async function getAllPreferencias(): Promise<JogadorPreferencia[]> {
 }
 
 export async function getAllNiveisFraude(): Promise<NiveisFraude[]> {
-  const { rows } = await pool.query<NiveisFraude>('SELECT codigo, nivel FROM mv_jogadores_niveis limit 200;');
+  const { rows } = await pool.query<NiveisFraude>('SELECT codigo, nivel FROM mv_jogadores_niveis');
   return rows;
 }
 

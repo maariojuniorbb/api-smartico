@@ -47,7 +47,7 @@ export async function sincronizarNiveisFraude(): Promise<ResultadoAtualizacao> {
   const lotes = [];
 
   while (niveisFraude.length) {
-    lotes.push(niveisFraude.splice(0, 200));
+    lotes.push(niveisFraude.splice(0, 400));
   }
 
   for (let i = 0; i < lotes.length; i++) {
