@@ -84,19 +84,22 @@ export async function atualizarNiveisFraudeLote(jogadores: NiveisFraude[]): Prom
       user_ext_id: codigo.toString(),
       event_type: 'update_profile',
       payload: {
-        core_custom_prop3: nivel,
+        core_custom_prop3: nivel.toString(),
       },
     };
   });
   
   logger.info(`iniciando a atualização de ${payload.length} níveis de fraude no Smartico`);
   try {
-    await axios.post(SMARTICO_API_URL, payload, {
+    const result = await axios.post(SMARTICO_API_URL, payload, {
       headers: {
         Authorization: SMARTICO_API_TOKEN,
         'Content-Type': 'application/json',
       },
     });
+    if(result.status !== 200) {
+      logger.info('Teve algum problema ao atualizar níveis');
+    }
     logger.info('Lote de níveis de fraude de jogadores atualizado com sucesso');
   } catch (error: any) {
     logger.error('Erro ao atualizar lote de níveis de fraude de jogadores: %o', error.response?.data || error.message);
