@@ -32,11 +32,11 @@ export async function getAllNiveisFraude(): Promise<NiveisFraude[]> {
 }
 
 export async function updateViewPreferencies(): Promise<any> {
-  const { rows } = await pool.query<JogadorPreferencia>('REFRESH MATERIALIZED VIEW mv_jogadores_preferencias;');
+  const { rows } = await pool.query<JogadorPreferencia>('REFRESH MATERIALIZED VIEW CONCURRENTLY mv_jogadores_preferencias;');
   return rows;
 }
 
 export async function updateViewNiveisFraude(): Promise<any> {
-  const { rows } = await pool.query<JogadorPreferencia>('REFRESH MATERIALIZED VIEW mv_jogadores_niveis;');
+  const { rows } = await pool.query<NiveisFraude>('REFRESH MATERIALIZED VIEW CONCURRENTLY mv_jogadores_niveis;');
   return rows;
 }
