@@ -37,7 +37,7 @@ export async function atualizarJogadorLote(jogadores: JogadorPreferencia[]): Pro
       top_spin_provider,
     };
 
-    const date = new Date('2025-05-23T15:30:00Z');
+    const date = new Date();
     const event_date = date.getTime();
 
     return {
@@ -74,7 +74,7 @@ export async function atualizarNiveisFraudeLote(jogadores: NiveisFraude[]): Prom
       nivel
     } = jogador;
 
-    const date = new Date('2025-05-23T15:30:00Z');
+    const date = new Date();
     const event_date = date.getTime();
 
     return {
