@@ -4,6 +4,33 @@ import { SMARTICO_API_URL, SMARTICO_API_TOKEN } from '../config/smartico';
 import { JogadorPreferencia, NiveisFraude } from '../repositories/jogadorRepository';
 import { v4 as uuidv4 } from 'uuid';
 
+async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  maxRetries: number = 3,
+  baseDelay: number = 1000
+): Promise<T> {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error: any) {
+      const isLastAttempt = attempt === maxRetries - 1;
+      const isRetriable = error.code === 'EAI_AGAIN' || 
+                          error.code === 'ENOTFOUND' || 
+                          error.code === 'ETIMEDOUT' ||
+                          error.response?.status >= 500;
+
+      if (isLastAttempt || !isRetriable) {
+        throw error;
+      }
+
+      const delay = baseDelay * Math.pow(2, attempt);
+      logger.warn(`Tentativa ${attempt + 1} falhou. Aguardando ${delay}ms antes de tentar novamente...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+  throw new Error('Máximo de tentativas excedido');
+}
+
 export async function atualizarJogadorLote(jogadores: JogadorPreferencia[]): Promise<void> {
   const payload = jogadores.map((jogador) => {
     const {
@@ -90,16 +117,24 @@ export async function atualizarNiveisFraudeLote(jogadores: NiveisFraude[]): Prom
   });
   
   logger.info(`iniciando a atualização de ${payload.length} níveis de fraude no Smartico`);
+  
   try {
-    const result = await axios.post(SMARTICO_API_URL, payload, {
-      headers: {
-        Authorization: SMARTICO_API_TOKEN,
-        'Content-Type': 'application/json',
-      },
+    await retryWithBackoff(async () => {
+      const result = await axios.post(SMARTICO_API_URL, payload, {
+        headers: {
+          Authorization: SMARTICO_API_TOKEN,
+          'Content-Type': 'application/json',
+        },
+        timeout: 30000, // 30 segundos de timeout
+      });
+      
+      if(result.status !== 200) {
+        logger.warn('Resposta não-200 recebida:', result.status);
+      }
+      
+      return result;
     });
-    if(result.status !== 200) {
-      logger.info('Teve algum problema ao atualizar níveis');
-    }
+    
     logger.info('Lote de níveis de fraude de jogadores atualizado com sucesso');
   } catch (error: any) {
     logger.error('Erro ao atualizar lote de níveis de fraude de jogadores: %o', error.response?.data || error.message);

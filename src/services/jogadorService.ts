@@ -60,6 +60,11 @@ export async function sincronizarNiveisFraude(): Promise<ResultadoAtualizacao> {
       await atualizarNiveisFraudeLote(jogadoresLote);
       
       logger.info('Lote %d atualizado com sucesso', i + 1);
+      
+      // Adicionar delay de 2 segundos entre lotes para evitar sobrecarga
+      if (i < lotes.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
     } catch (error) {
       logger.error('Erro ao atualizar o lote %d: %o', i + 1, error);
     }
