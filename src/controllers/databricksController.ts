@@ -9,10 +9,6 @@ export class DatabricksController {
     this.databricksService = service;
   }
 
-  /**
-   * GET /api/databricks/teste
-   * Executa uma query fixa de teste
-   */
   executarTeste = async (_req: Request, res: Response): Promise<void> => {
     try {
       logger.info('Recebida requisição para executar teste');

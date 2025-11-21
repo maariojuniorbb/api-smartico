@@ -61,7 +61,6 @@ export async function sincronizarNiveisFraude(): Promise<ResultadoAtualizacao> {
       
       logger.info('Lote %d atualizado com sucesso', i + 1);
       
-      // Adicionar delay de 2 segundos entre lotes para evitar sobrecarga
       if (i < lotes.length - 1) {
         await new Promise(resolve => setTimeout(resolve, 2000));
       }
