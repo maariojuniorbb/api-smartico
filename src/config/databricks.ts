@@ -32,7 +32,6 @@ export const getDatabricksClient = async () => {
     path,
     token,
     socketTimeout: 300000, // 5 minutos
-    connectionTimeout: 300000, // 5 minutos
   });
 
   logger.info('Conectado ao Databricks com sucesso');

@@ -34,6 +34,56 @@ export class DatabricksController {
       });
     }
   };
+
+  testarPreferencias = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      logger.info('Recebida requisição para testar preferências');
+
+      const results = await this.databricksService.testarPreferencias();
+
+      res.status(200).json({
+        success: true,
+        message: 'Query de preferências executada com sucesso',
+        data: results,
+        count: results.length,
+      });
+    } catch (error: any) {
+      logger.error('Erro ao testar preferências', { 
+        message: error.message,
+        stack: error.stack
+      });
+      res.status(500).json({
+        error: 'Erro ao testar query de preferências',
+        message: error.message || 'Erro desconhecido',
+        details: error.stack
+      });
+    }
+  };
+
+  testarNiveisFraude = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      logger.info('Recebida requisição para testar níveis de fraude');
+
+      const results = await this.databricksService.testarNiveisFraude();
+
+      res.status(200).json({
+        success: true,
+        message: 'Query de níveis de fraude executada com sucesso',
+        data: results,
+        count: results.length,
+      });
+    } catch (error: any) {
+      logger.error('Erro ao testar níveis de fraude', { 
+        message: error.message,
+        stack: error.stack
+      });
+      res.status(500).json({
+        error: 'Erro ao testar query de níveis de fraude',
+        message: error.message || 'Erro desconhecido',
+        details: error.stack
+      });
+    }
+  };
 }
 
 export default new DatabricksController();

@@ -1,4 +1,3 @@
-import pool from '../config/db';
 import databricksRepository from './DatabricksRepository';
 
 export interface JogadorPreferencia {
@@ -23,7 +22,51 @@ export interface NiveisFraude {
 }
 
 export async function getAllPreferencias(): Promise<JogadorPreferencia[]> {
-  const query = 'SELECT * FROM mv_jogadores_preferencias';
+  const query = `
+    WITH stats AS (
+        SELECT 
+            ct.user_id AS jogador_codigo,
+            g.name AS jogo,
+            ct.provider AS provedor,
+            SUM(ct.amount) FILTER (WHERE type = 'result') AS sum_result,
+            SUM(ct.amount) FILTER (WHERE type = 'bet') AS sum_bet,
+            COUNT(ct.id) FILTER (WHERE type = 'bet') AS count_bet
+        FROM silver.tb_casino_transactions ct
+        LEFT JOIN silver.tb_casino_games g ON g.id = ct.game_id
+        GROUP BY 1, 2, 3
+    ),
+    ranked AS (
+        SELECT
+            jogador_codigo,
+            jogo,
+            provedor,
+            sum_result,
+            sum_bet,
+            count_bet,
+            ROW_NUMBER() OVER (PARTITION BY jogador_codigo ORDER BY sum_result DESC) AS rn_result,
+            ROW_NUMBER() OVER (PARTITION BY jogador_codigo ORDER BY sum_bet DESC) AS rn_bet,
+            ROW_NUMBER() OVER (PARTITION BY jogador_codigo ORDER BY count_bet DESC) AS rn_spin
+        FROM stats
+    )
+    SELECT
+        jogador_codigo,
+        MAX(CASE WHEN rn_result = 1 THEN jogo END) AS top_win_1,
+        MAX(CASE WHEN rn_result = 2 THEN jogo END) AS top_win_2,
+        MAX(CASE WHEN rn_result = 3 THEN jogo END) AS top_win_3,
+        MAX(CASE WHEN rn_result = 1 THEN provedor END) AS top_win_provider,
+        MAX(CASE WHEN rn_bet = 1 THEN jogo END) AS top_amount_1,
+        MAX(CASE WHEN rn_bet = 2 THEN jogo END) AS top_amount_2,
+        MAX(CASE WHEN rn_bet = 3 THEN jogo END) AS top_amount_3,
+        MAX(CASE WHEN rn_bet = 1 THEN provedor END) AS top_amount_provider,
+        MAX(CASE WHEN rn_spin = 1 THEN jogo END) AS top_spin_1,
+        MAX(CASE WHEN rn_spin = 2 THEN jogo END) AS top_spin_2,
+        MAX(CASE WHEN rn_spin = 3 THEN jogo END) AS top_spin_3,
+        MAX(CASE WHEN rn_spin = 1 THEN provedor END) AS top_spin_provider
+    FROM ranked
+    GROUP BY jogador_codigo
+    ORDER BY jogador_codigo;
+    `;
+
   const results = await databricksRepository.executeQuery(query);
   return results as JogadorPreferencia[];
 }

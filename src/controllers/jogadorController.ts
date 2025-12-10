@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { sincronizarPreferencias, atualizarViewPreferencias, sincronizarNiveisFraude, atualizarViewNiveisFraude } from '../services/jogadorService';
+import { sincronizarPreferencias, sincronizarNiveisFraude } from '../services/jogadorService';
 import logger from '../config/logger';
 
 export async function sincronizar_preferencias(_req: Request, res: Response) {
@@ -30,33 +30,6 @@ export async function sincronizar_preferencias(_req: Request, res: Response) {
   }
 }
 
-export async function atualizar_view_preferencias(_req: Request, res: Response) {
-  try {
-    const startTime = new Date();
-
-    const resultados = await atualizarViewPreferencias();
-
-    const endTime = new Date();
-
-    const duration = endTime.getTime() - startTime.getTime();
-
-    const hours = Math.floor(duration / (1000 * 60 * 60));
-    const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((duration % (1000 * 60)) / 1000);
-
-    const formattedTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-    res.json({
-      statuscode: 200,
-      message: `Atualizacao da view de preferencias finalizada em ${formattedTime}`,
-      resultados,
-    });
-  } catch (error: any) {
-    logger.error('Erro na atualização da view: %o', error);
-    res.status(500).json({ error: error.message });
-  }
-}
-
 export async function sincronizar_nivel_fraude(_req: Request, res: Response) {
   try {
     const startTime = new Date();
@@ -76,33 +49,6 @@ export async function sincronizar_nivel_fraude(_req: Request, res: Response) {
     res.json({
       statuscode: 200,
       message: `Sincronização niveis de fraude finalizada em ${formattedTime}`,
-      resultados,
-    });
-  } catch (error: any) {
-    logger.error('Erro na sincronização: %o', error);
-    res.status(500).json({ error: error.message });
-  }
-}
-
-export async function atualizar_view_nivel_fraude(_req: Request, res: Response) {
-  try {
-    const startTime = new Date();
-
-    const resultados = await atualizarViewNiveisFraude();
-
-    const endTime = new Date();
-
-    const duration = endTime.getTime() - startTime.getTime();
-
-    const hours = Math.floor(duration / (1000 * 60 * 60));
-    const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((duration % (1000 * 60)) / 1000);
-
-    const formattedTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-    res.json({
-      statuscode: 200,
-      message: `Sincronização da view de niveis finalizada em ${formattedTime}`,
       resultados,
     });
   } catch (error: any) {
