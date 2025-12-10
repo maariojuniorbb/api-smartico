@@ -31,8 +31,8 @@ export async function getAllPreferencias(): Promise<JogadorPreferencia[]> {
             SUM(ct.amount) FILTER (WHERE type = 'result') AS sum_result,
             SUM(ct.amount) FILTER (WHERE type = 'bet') AS sum_bet,
             COUNT(ct.id) FILTER (WHERE type = 'bet') AS count_bet
-        FROM silver.tb_casino_transactions ct
-        LEFT JOIN silver.tb_casino_games g ON g.id = ct.game_id
+        FROM apostatudobetbr.silver.tb_casino_transactions ct
+        LEFT JOIN apostatudobetbr.silver.tb_casino_games g ON g.id = ct.game_id
         GROUP BY 1, 2, 3
     ),
     ranked AS (
@@ -64,7 +64,7 @@ export async function getAllPreferencias(): Promise<JogadorPreferencia[]> {
         MAX(CASE WHEN rn_spin = 1 THEN provedor END) AS top_spin_provider
     FROM ranked
     GROUP BY jogador_codigo
-    ORDER BY jogador_codigo;
+    ORDER BY jogador_codigo
     `;
 
   const results = await databricksRepository.executeQuery(query);
@@ -77,7 +77,7 @@ export async function getAllNiveisFraude(): Promise<NiveisFraude[]> {
         SELECT
             id AS user_id,
             name
-        FROM silver.tb_users
+        FROM apostatudobetbr.silver.tb_users
     ),
     transactions AS (
         SELECT 
@@ -87,7 +87,7 @@ export async function getAllNiveisFraude(): Promise<NiveisFraude[]> {
             SUM(amount) FILTER (WHERE type = 'debit' AND src = 'casino_transaction') / 100 AS turnover,
             SUM(amount) FILTER (WHERE type = 'credit' AND src = 'casino_transaction') / 100 AS win_amount,
             SUM(amount) FILTER (WHERE type = 'credit' AND src = 'casino_transaction_rollback') / 100 AS total_rollback_credit
-        FROM silver.tb_transactions
+        FROM apostatudobetbr.silver.tb_transactions
         WHERE status = 'approved'
         GROUP BY 1
     )
@@ -115,7 +115,7 @@ export async function getAllNiveisFraude(): Promise<NiveisFraude[]> {
               ELSE 0
           END AS nivel
     FROM users u
-    INNER JOIN transactions t ON u.user_id = t.user_id;
+    INNER JOIN transactions t ON u.user_id = t.user_id
     `;
 
   const results = await databricksRepository.executeQuery(query);

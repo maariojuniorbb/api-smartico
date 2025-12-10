@@ -42,10 +42,6 @@ export async function sincronizarNiveisFraude(): Promise<ResultadoAtualizacao> {
     const jogadoresLote = lotes[i];
 
     try {
-      // Log dos 10 primeiros registros do lote
-      const amostra = jogadoresLote.slice(0, 10);
-      logger.info(`Lote ${i + 1} - Amostra dos 10 primeiros registros: ${JSON.stringify(amostra, null, 2)}`);
-      
       await atualizarNiveisFraudeLote(jogadoresLote);
       
       logger.info(`Lote ${i + 1} atualizado com sucesso (Total: ${jogadoresLote.length} registros)`);
