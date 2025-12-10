@@ -1,4 +1,4 @@
-import databricksRepository, { DatabricksRepository } from '../repositories/databricksRepository';
+import databricksRepository, { DatabricksRepository } from '../repositories/DatabricksRepository';
 import logger from '../config/logger';
 
 export class DatabricksService {

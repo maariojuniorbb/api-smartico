@@ -1,4 +1,4 @@
-import { getAllPreferencias, getAllNiveisFraude, JogadorPreferencia, NiveisFraude, updateViewPreferencies, updateViewNiveisFraude } from '../repositories/jogadorRepository';
+import { getAllPreferencias, getAllNiveisFraude, JogadorPreferencia, NiveisFraude, updateViewPreferencies, updateViewNiveisFraude } from '../repositories/JogadorRepository';
 import { atualizarJogadorLote, atualizarNiveisFraudeLote } from './smarticoService';
 import logger from '../config/logger';
 
@@ -57,9 +57,13 @@ export async function sincronizarNiveisFraude(): Promise<ResultadoAtualizacao> {
     const jogadoresLote = lotes[i];
 
     try {
+      // Log dos 10 primeiros registros do lote
+      const amostra = jogadoresLote.slice(0, 10);
+      logger.info('Lote %d - Amostra dos 10 primeiros registros:', i + 1, amostra);
+      
       await atualizarNiveisFraudeLote(jogadoresLote);
       
-      logger.info('Lote %d atualizado com sucesso', i + 1);
+      logger.info('Lote %d atualizado com sucesso (Total: %d registros)', i + 1, jogadoresLote.length);
       
       if (i < lotes.length - 1) {
         await new Promise(resolve => setTimeout(resolve, 2000));

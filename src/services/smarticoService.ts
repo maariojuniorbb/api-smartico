@@ -1,7 +1,7 @@
 import axios from 'axios';
 import logger from '../config/logger';
 import { SMARTICO_API_URL, SMARTICO_API_TOKEN } from '../config/smartico';
-import { JogadorPreferencia, NiveisFraude } from '../repositories/jogadorRepository';
+import { JogadorPreferencia, NiveisFraude } from '../repositories/JogadorRepository';
 import { v4 as uuidv4 } from 'uuid';
 
 async function retryWithBackoff<T>(
